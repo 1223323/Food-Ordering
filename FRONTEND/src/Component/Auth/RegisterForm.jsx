@@ -9,9 +9,12 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../State/Authentication/Action"; // Adjust the path to your Action.js file
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -30,8 +33,12 @@ const RegisterForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your registration logic here
-    console.log("Form submitted:", formData);
+    dispatch(
+      registerUser({
+        userData: formData,
+        navigate,
+      })
+    );
   };
 
   return (

@@ -6,73 +6,38 @@ import {
   Typography,
   InputAdornment,
   IconButton,
-  CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../State/Authentication/Action"; // Adjust the path to your Action.js file
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState({
-    email: "",
-    password: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [feedback, setFeedback] = useState("");
 
-  const validateFields = () => {
-    const tempErrors = {};
-    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      tempErrors.email = "Invalid email address";
-    }
-    if (formData.password.length < 6) {
-      tempErrors.password = "Password must be at least 6 characters";
-    }
-    return tempErrors;
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const tempErrors = validateFields();
-    if (Object.keys(tempErrors).length > 0) {
-      setErrors(tempErrors);
-      return;
-    }
-
-    setErrors({});
-    setIsLoading(true);
-    setFeedback("");
-
-    // Simulate an API call (replace this with actual API logic)
-    setTimeout(() => {
-      setIsLoading(false);
-      if (formData.email === "test@example.com" && formData.password === "123456") {
-        setFeedback("Login successful!");
-        navigate("/dashboard"); // Redirect to dashboard
-      } else {
-        setFeedback("Invalid email or password. Please try again.");
-      }
-    }, 2000);
-  };
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevState) => ({
-      ...prevState,
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
-
-    // Clear errors as user types
-    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Dispatch the loginUser action with formData and navigate
+    dispatch(
+      loginUser({
+        userData: formData,
+        navigate,
+      })
+    );
   };
 
   return (
@@ -81,14 +46,13 @@ const LoginForm = () => {
         maxWidth: "400px",
         margin: "auto",
         padding: "2rem",
-        boxShadow: "0 0 10px rgba(0,0,0,0.3)",
+        boxShadow: "0 0 10px rgba(0,0,0,0.1)",
         borderRadius: "8px",
         mt: 4,
-        bgcolor: "#181818", // Dark background
       }}
     >
-      <Typography variant="h5" textAlign="center" mb={3} sx={{ color: "#fff" }}>
-        Login
+      <Typography variant="h5" textAlign="center" mb={3}>
+        Login to Your Account
       </Typography>
 
       <form onSubmit={handleSubmit}>
@@ -101,18 +65,6 @@ const LoginForm = () => {
           onChange={handleChange}
           margin="normal"
           required
-          error={Boolean(errors.email)}
-          helperText={errors.email}
-          sx={{
-            backgroundColor: "#2c2c2c",
-            color: "#fff",
-            "& .MuiInputLabel-root": {
-              color: "#fff",
-            },
-            "& .MuiInputBase-root": {
-              color: "#fff",
-            },
-          }}
         />
 
         <TextField
@@ -124,22 +76,13 @@ const LoginForm = () => {
           onChange={handleChange}
           margin="normal"
           required
-          error={Boolean(errors.password)}
-          helperText={errors.password}
-          sx={{
-            backgroundColor: "#2c2c2c",
-            color: "#fff",
-            "& .MuiInputLabel-root": {
-              color: "#fff",
-            },
-            "& .MuiInputBase-root": {
-              color: "#fff",
-            },
-          }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={handleClickShowPassword} edge="end">
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                >
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
@@ -151,34 +94,14 @@ const LoginForm = () => {
           type="submit"
           variant="contained"
           fullWidth
-          sx={{
-            mt: 3,
-            mb: 2,
-            padding: "0.8rem 0",
-            bgcolor: "#e91e63", // Pink color
-            color: "#fff",
-            "&:hover": {
-              bgcolor: "#c2185b", // Darker pink on hover
-            },
-          }}
-          disabled={isLoading}
+          sx={{ mt: 3, mb: 2 }}
         >
-          {isLoading ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Login"}
+          Login
         </Button>
 
-        <Typography
-          variant="body2"
-          align="center"
-          sx={{ color: feedback.includes("successful") ? "green" : "red", color: "#fff" }}
-        >
-          {feedback}
-        </Typography>
-
-        <Typography textAlign="center" mt={2} sx={{ color: "#fff" }}>
-          New User?{" "}
-          <RouterLink to="/account/register" style={{ color: "#e91e63", fontWeight: 600 }}>
-            Register Here
-          </RouterLink>
+        <Typography textAlign="center">
+          Don't have an account?{" "}
+          <Button onClick={() => navigate("/account/register")}>Register</Button>
         </Typography>
       </form>
     </Box>
