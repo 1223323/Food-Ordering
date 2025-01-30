@@ -9,7 +9,18 @@ import  {Cart}  from './Component/Cart/Cart';
 import  Profile  from './Component/Profile/Profile';
 import CustomerRouter from './Component/Routers/CustomerRouter';
 import { Auth } from './Component/Auth/Auth';
+import { useDispatch,useSelector } from 'react-redux';
+import { getUser } from './Component/State/Authentication/Action';
+import { useEffect } from'react';
 function App() {
+  const dispatch=useDispatch();
+  const jwt=localStorage.getItem('jwt');
+  const {auth}=useSelector(store=>store);
+
+  useEffect(() => {
+    dispatch(getUser(auth.jwt || jwt))},[auth.jwt])
+  
+
   return (
     <ThemeProvider theme={darkTheme}>
 

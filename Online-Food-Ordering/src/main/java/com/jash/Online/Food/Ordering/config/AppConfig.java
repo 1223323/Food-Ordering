@@ -37,7 +37,7 @@ public class AppConfig {
                 .csrf(csrf->csrf.disable())
                 //CORS (Cross-Origin Resource Sharing) is a security feature that controls how a web page can request data from a different domain (origin).
                 .cors(cors->cors.configurationSource(configurationSource()));
-                
+
                 return http.build();
     }
 
@@ -50,7 +50,7 @@ public class AppConfig {
                 CorsConfiguration config = new CorsConfiguration();
 
                 //Add the type of url that can access the project
-                config.setAllowedOrigins(List.of("*"));
+                config.setAllowedOrigins(List.of("http://localhost:3000"));
 
                 //Permits cookies or authentication data to be sent with the request.
                 config.setAllowCredentials(true);
@@ -64,7 +64,7 @@ public class AppConfig {
                 //Allows the Authorization header to be visible in responses.
                 config.setExposedHeaders(Arrays.asList("Authorization"));
 
-                config.setMaxAge(3600L);
+                config.setMaxAge(36000L);
 
                 return config;
             }
